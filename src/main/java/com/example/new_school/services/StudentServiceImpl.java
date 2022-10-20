@@ -3,9 +3,9 @@ package com.example.new_school.services;
 import com.example.new_school.dto.StudentDto;
 import com.example.new_school.models.StudentEntity;
 import com.example.new_school.repositoryies.StudentRepository;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-@Data
+@RequiredArgsConstructor
 @Service
 public class StudentServiceImpl implements StudentService {
 
@@ -21,7 +21,7 @@ public class StudentServiceImpl implements StudentService {
     }
     @Override
     public StudentDto getStudent(Long id) {
-        return migrateEntityToDto(studentRepository.findById(id).orElse(null));
+        return migrateEntityToDto(studentRepository.findById(id).get());
     }
 
     @Override
@@ -31,7 +31,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDto deleteStudent(Long id) {
-        StudentDto studentDto = migrateEntityToDto(studentRepository.findById(id).orElse(null));
+        StudentDto studentDto = migrateEntityToDto(studentRepository.findById(id).get());
         studentRepository.deleteById(studentDto.getIdStudent());
         return studentDto;//тут я же правильно понял, раз он его удалил из базы, мы уже не можем его вернуть?
         // есть варинат получше нежели сначала создать эту сущность , удалить и вернуть
