@@ -4,7 +4,10 @@ import com.example.new_school.dto.StudentDto;
 import com.example.new_school.models.StudentEntity;
 import com.example.new_school.services.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,19 +25,33 @@ public class StudentController {
     // ResponseEntity ? Понимаю, что наименовая методов и эндпоинтов хромают,
     // не обращай пожалуйста на это внимание))
     @PostMapping("/create")
-    public StudentDto createStudent(@RequestBody StudentEntity entity){
-        return studentService.createStudent(entity);
+    public ResponseEntity<StudentDto> createStudent(@RequestBody StudentEntity entity){
+        return ResponseEntity.ok(studentService.createStudent(entity));
     }
     @GetMapping("/{id}")
-    public StudentDto getStudent(@PathVariable Long id){
-        return studentService.getStudent(id);
+    public ResponseEntity<StudentDto> getStudent(@PathVariable Long id){
+        return ResponseEntity.ok(studentService.getStudent(id));
+    }
+    @GetMapping("/printAll")
+    public ResponseEntity<Collection<StudentDto>> getAllStudents(){
+        return ResponseEntity.ok(studentService.getAllStudentsDto());
+    }
+    @GetMapping("/age/{age}")
+    public ResponseEntity<Collection<StudentDto>> getStudentByAge(@PathVariable Integer age){
+        return ResponseEntity.ok(studentService.getStudentsByAge(age));
+    }
+    @GetMapping({"minAge","maxAge"})
+    public ResponseEntity<Collection<StudentDto>> getStudentsAgeByBetween(@RequestParam Integer minAge,
+                                                                          @RequestParam Integer maxAge){
+        return ResponseEntity.ok(studentService.getStudentsByBetween(minAge, maxAge));
     }
     @PutMapping
-    public StudentDto setStudent(@RequestBody StudentEntity entity){
-        return studentService.updateStudent(entity);
+    public ResponseEntity<StudentDto> setStudent(@RequestBody StudentEntity entity){
+        return ResponseEntity.ok(studentService.updateStudent(entity));
     }
     @DeleteMapping("/{id}")
-    public StudentDto deleteStudent(@PathVariable Long id){
-        return studentService.deleteStudent(id);
+    public ResponseEntity<StudentDto> deleteStudent(@PathVariable Long id){
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok().build();
     }
 }

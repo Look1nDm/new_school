@@ -1,14 +1,20 @@
 package com.example.new_school.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentDto {
     public Long idStudent;
     public String name;
     public int age;
+    public FacultyDto facultyDto;
+
+    public StudentDto(Long idStudent, String name, int age) {
+        this.idStudent = idStudent;
+        this.name = name;
+        this.age = age;
+    }
 }
