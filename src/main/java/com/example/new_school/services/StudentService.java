@@ -1,5 +1,6 @@
 package com.example.new_school.services;
 
+import com.example.new_school.dto.FacultyDto;
 import com.example.new_school.dto.StudentDto;
 import com.example.new_school.models.StudentEntity;
 
@@ -12,11 +13,16 @@ public interface StudentService {
 
     StudentDto updateStudent(StudentEntity entity);
 
-    StudentDto deleteStudent(Long id);
+    void deleteStudent(Long id);
 
     Collection<StudentDto> getAllStudentsDto();
 
     Collection<StudentDto> getStudentsByAge(Integer age);
 
     Collection<StudentDto> getStudentsByBetween(Integer min,Integer max);
+
+    FacultyDto findFacultyByStudentId(Long studentId);
+    Long getCountAllStudents();
+    Double getAvgAgeStudents();
+    Collection<StudentDto> getFiveLastStudents();
 }

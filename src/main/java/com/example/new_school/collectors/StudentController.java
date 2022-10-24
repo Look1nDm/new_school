@@ -1,5 +1,6 @@
 package com.example.new_school.collectors;
 
+import com.example.new_school.dto.FacultyDto;
 import com.example.new_school.dto.StudentDto;
 import com.example.new_school.models.StudentEntity;
 import com.example.new_school.services.StudentService;
@@ -18,6 +19,7 @@ public class StudentController {
     // все делать вместо конструктора
     // мы должны же инжектить класс сервиса , а не интерфейс?
     private final StudentService studentService; // в пол первого ночи понял , что нужно интерфейс
+
     //посмотри пожалуйста обзую логику:
     // правильно ли я понимаю что в контроллере мы передаем ентити в сервис
     // в сервисе мы переделываем его в ДТО(т.к. маппер я не подключил)
@@ -25,32 +27,58 @@ public class StudentController {
     // ResponseEntity ? Понимаю, что наименовая методов и эндпоинтов хромают,
     // не обращай пожалуйста на это внимание))
     @PostMapping("/create")
-    public ResponseEntity<StudentDto> createStudent(@RequestBody StudentEntity entity){
+    public ResponseEntity<StudentDto> createStudent(@RequestBody StudentEntity entity) {
         return ResponseEntity.ok(studentService.createStudent(entity));
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<StudentDto> getStudent(@PathVariable Long id){
+    public ResponseEntity<StudentDto> getStudent(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.getStudent(id));
     }
+
     @GetMapping("/printAll")
-    public ResponseEntity<Collection<StudentDto>> getAllStudents(){
+    public ResponseEntity<Collection<StudentDto>> getAllStudents() {
         return ResponseEntity.ok(studentService.getAllStudentsDto());
     }
+
     @GetMapping("/age/{age}")
-    public ResponseEntity<Collection<StudentDto>> getStudentByAge(@PathVariable Integer age){
+    public ResponseEntity<Collection<StudentDto>> getStudentByAge(@PathVariable Integer age) {
         return ResponseEntity.ok(studentService.getStudentsByAge(age));
     }
-    @GetMapping({"minAge","maxAge"})
+
+    @GetMapping({"minAge", "maxAge"})
     public ResponseEntity<Collection<StudentDto>> getStudentsAgeByBetween(@RequestParam Integer minAge,
-                                                                          @RequestParam Integer maxAge){
+                                                                          @RequestParam Integer maxAge) {
         return ResponseEntity.ok(studentService.getStudentsByBetween(minAge, maxAge));
     }
+
+    @GetMapping("/{studentId}/faculty")
+    public ResponseEntity<FacultyDto> getFacultyByStudent(@PathVariable Long studentId) {
+        return ResponseEntity.ok(studentService.findFacultyByStudentId(studentId));
+    }
+
+    @GetMapping("/countStudents")
+    public ResponseEntity<Long> getCountAllStudents() {
+        return ResponseEntity.ok(studentService.getCountAllStudents());
+    }
+
+    @GetMapping("/avgAge")
+    public ResponseEntity<Double> getAvgAgeStudents() {
+        return ResponseEntity.ok(studentService.getAvgAgeStudents());
+    }
+
+    @GetMapping("/lastFive")
+    public ResponseEntity<Collection<StudentDto>> getFiveLastStudents() {
+        return ResponseEntity.ok(studentService.getFiveLastStudents());
+    }
+
     @PutMapping
-    public ResponseEntity<StudentDto> setStudent(@RequestBody StudentEntity entity){
+    public ResponseEntity<StudentDto> setStudent(@RequestBody StudentEntity entity) {
         return ResponseEntity.ok(studentService.updateStudent(entity));
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<StudentDto> deleteStudent(@PathVariable Long id){
+    public ResponseEntity<StudentDto> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.ok().build();
     }

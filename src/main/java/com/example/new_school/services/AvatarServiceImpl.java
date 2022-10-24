@@ -1,11 +1,13 @@
 package com.example.new_school.services;
 
-import com.example.new_school.Utils.StudentUtils;
+import com.example.new_school.Utils.AvatarUtils;
+import com.example.new_school.dto.AvatarDto;
+import com.example.new_school.dto.StudentDto;
 import com.example.new_school.models.AvatarEntity;
-import com.example.new_school.models.StudentEntity;
 import com.example.new_school.repositoryies.AvatarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
@@ -21,10 +24,11 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class AvatarServiceImpl implements AvatarService {
     @Value("${path.to.avatars.folder}")
     private String avatarsDirectory;
-    private StudentService studentService;
-    private AvatarRepository avatarRepository;
+    private final StudentService studentService;
+    private final AvatarRepository avatarRepository;
+
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
-        StudentEntity student = StudentUtils.migrateDtoToEntity(studentService.getStudent(studentId));
+        StudentDto student = studentService.getStudent(studentId);
         Path filePath = Path.of(avatarsDirectory, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -35,14 +39,21 @@ public class AvatarServiceImpl implements AvatarService {
         ){
             bis.transferTo(bos);
         }
-        AvatarEntity avatar = findAvatar(studentId);
+        AvatarDto avatar = AvatarUtils.migrateEntityToDto(findAvatar(studentId));
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
         avatar.setFileSize(avatarFile.getSize());
         avatar.setMediaType(avatarFile.getContentType());
         avatar.setData(avatarFile.getBytes());
-        avatarRepository.save(avatar);
+        avatarRepository.save(AvatarUtils.migrateDtoToEntity(avatar));
     }
+
+    @Override
+    public Collection<AvatarDto> getPageAvatars(Integer page, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(page,pageSize);
+        return AvatarUtils.migrateEntityToDtoCollection(avatarRepository.findAll(pageRequest).getContent());
+    }
+
     public AvatarEntity findAvatar(Long studentId){
         return avatarRepository.findById(studentId)
                 .orElse(new AvatarEntity());

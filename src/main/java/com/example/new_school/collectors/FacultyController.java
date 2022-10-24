@@ -1,9 +1,11 @@
 package com.example.new_school.collectors;
 
 import com.example.new_school.dto.FacultyDto;
+import com.example.new_school.dto.StudentDto;
 import com.example.new_school.models.FacultyEntity;
 import com.example.new_school.services.FacultyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +41,13 @@ public class FacultyController {
     @GetMapping("/name/{name}")
     public ResponseEntity<FacultyDto> getFacultyByName(@PathVariable String name) {
         return ResponseEntity.ok(facultyService.getFacultyByName(name));
+    }
+    @GetMapping("/{numberFaculty}/students")
+    public ResponseEntity<Collection<StudentDto>> getStudentsOfFaculty(@PathVariable Long numberFaculty){
+        if (numberFaculty != null) {
+            return ResponseEntity.ok(facultyService.getStudentsOfFaculty(numberFaculty));
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping

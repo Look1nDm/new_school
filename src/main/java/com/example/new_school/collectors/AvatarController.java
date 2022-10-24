@@ -1,5 +1,6 @@
 package com.example.new_school.collectors;
 
+import com.example.new_school.dto.AvatarDto;
 import com.example.new_school.models.AvatarEntity;
 import com.example.new_school.repositoryies.AvatarRepository;
 import com.example.new_school.services.AvatarServiceImpl;
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class AvatarController {
     private final AvatarServiceImpl avatarService;
     private final AvatarRepository avatarRepository;
 
-    @PostMapping(value = "/{studentId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{studentId}/avatar",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadAvatar(@PathVariable Long studentId,
                                                @RequestParam MultipartFile avatar) throws IOException {
         avatarService.uploadAvatar(studentId,avatar);
@@ -50,5 +52,9 @@ public class AvatarController {
             response.setContentLength((int) avatar.getFileSize());
             is.transferTo(os);
         }
+    }
+    @GetMapping("/avatars-page")
+    public ResponseEntity<Collection<AvatarDto>> avatarsPage(@RequestParam Integer page, Integer pageSize){
+        return ResponseEntity.ok(avatarService.getPageAvatars(page,pageSize));
     }
 }

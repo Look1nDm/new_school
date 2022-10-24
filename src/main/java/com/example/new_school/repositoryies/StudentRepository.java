@@ -1,15 +1,26 @@
 package com.example.new_school.repositoryies;
 
-import com.example.new_school.dto.StudentDto;
 import com.example.new_school.models.StudentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
 @Repository
-public interface StudentRepository extends JpaRepository<StudentEntity,Long> {
-    Collection<StudentDto> findStudentByAge(Integer age);
+public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
+    Collection<StudentEntity> findStudentByAge(Integer age);
 
-    Collection<StudentDto> findByAgeBetween(Integer min,Integer max);
+    Collection<StudentEntity> findByAgeBetween(Integer min, Integer max);
+
+    Collection<StudentEntity> findStudentEntityByFacultyId(Long number);
+
+    @Query(value = "SELECT count(id) FROM student_entity", nativeQuery = true)
+    Long getAllCountOfStudents();
+
+    @Query(value = "SELECT AVG (age) FROM student_entity", nativeQuery = true)
+    Double getAvgAgeStudents();
+
+    @Query(value = "SELECT * FROM student_entity ORDER BY id DESC LIMIT 5", nativeQuery = true)
+    Collection<StudentEntity> findFiveLastStudents();
 }

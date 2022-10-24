@@ -1,9 +1,12 @@
 package com.example.new_school.services;
 
 import com.example.new_school.Utils.FacultyUtils;
+import com.example.new_school.Utils.StudentUtils;
 import com.example.new_school.dto.FacultyDto;
+import com.example.new_school.dto.StudentDto;
 import com.example.new_school.models.FacultyEntity;
 import com.example.new_school.repositoryies.FacultyRepository;
+import com.example.new_school.repositoryies.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,7 @@ import java.util.Collection;
 @Service
 public class FacultyServiceImpl implements FacultyService {
     private final FacultyRepository facultyRepository;
+    private final StudentRepository studentRepository;
 
     @Override
     public FacultyDto createFaculty(FacultyEntity entity) {
@@ -30,10 +34,9 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public FacultyDto deleteFaculty(Long id) {
+    public void deleteFaculty(Long id) {
         FacultyDto facultyDto = FacultyUtils.migrateEntityToDto(facultyRepository.findById(id).get());
         facultyRepository.deleteById(facultyDto.getIdFaculty());
-        return facultyDto;
     }
 
     @Override
@@ -50,5 +53,9 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public FacultyDto getFacultyByName(String name) {
         return FacultyUtils.migrateEntityToDto(facultyRepository.findFacultyByNameIgnoreCase(name));
+    }
+
+    public Collection<StudentDto> getStudentsOfFaculty(Long id) {
+        return StudentUtils.migrateEntityToDtoCollection(studentRepository.findStudentEntityByFacultyId(id));
     }
 }
